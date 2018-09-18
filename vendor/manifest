@@ -1,0 +1,25 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/sirupsen/logrus",
+			"repository": "https://github.com/sirupsen/logrus",
+			"revision": "d23a0f20d429b5da960216daca3b37e075cbdcd1",
+			"branch": "master"
+		},
+		{
+			"importpath": "golang.org/x/crypto/ssh/terminal",
+			"repository": "https://go.googlesource.com/crypto",
+			"revision": "0e37d006457bf46f9e6692014ba72ef82c33022c",
+			"branch": "master",
+			"path": "/ssh/terminal"
+		},
+		{
+			"importpath": "golang.org/x/sys/unix",
+			"repository": "https://go.googlesource.com/sys",
+			"revision": "d0be0721c37eeb5299f245a996a483160fc36940",
+			"branch": "master",
+			"path": "/unix"
+		}
+	]
+}
