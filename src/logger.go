@@ -13,7 +13,9 @@ import (
 const transportProtocol = "tcp"
 
 var stdOutFormater logrus.TextFormatter = logrus.TextFormatter{
-	DisableTimestamp:       false,
+	DisableColors:          true,
+	QuoteEmptyFields:       true,
+	DisableTimestamp:       true,
 	TimestampFormat:        "15:04:05.000",
 	DisableLevelTruncation: true,
 	FieldMap: logrus.FieldMap{
