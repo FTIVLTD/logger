@@ -13,7 +13,7 @@ import (
 const transportProtocol = "tcp"
 
 var stdOutFormater logrus.TextFormatter = logrus.TextFormatter{
-	DisableColors:          true,
+	DisableColors:          false,
 	QuoteEmptyFields:       true,
 	DisableTimestamp:       true,
 	TimestampFormat:        "15:04:05.000",
