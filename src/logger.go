@@ -12,26 +12,10 @@ import (
 
 const transportProtocol = "tcp"
 
-var stdOutFormater logrus.TextFormatter = logrus.TextFormatter{
-	DisableColors:          false,
-	QuoteEmptyFields:       true,
-	DisableTimestamp:       true,
-	TimestampFormat:        "15:04:05.000",
-	DisableLevelTruncation: true,
-	FieldMap: logrus.FieldMap{
-		logrus.FieldKeyTime:  "time",
-		logrus.FieldKeyLevel: "level",
-		logrus.FieldKeyMsg:   "message"},
-}
-
-var logstashFormatter logrus.JSONFormatter = logrus.JSONFormatter{
-	DisableTimestamp: false,
-	TimestampFormat:  "15:04:05.000",
-	FieldMap: logrus.FieldMap{
-		logrus.FieldKeyTime:  "time",
-		logrus.FieldKeyLevel: "level",
-		logrus.FieldKeyMsg:   "message"},
-}
+const (
+	Ltimestamp = 1 << iota
+	LJSON
+)
 
 const (
 	connected = iota
@@ -48,12 +32,12 @@ type LoggerType struct {
 	status        int32
 }
 
-func New(name, address string) (*LoggerType, error) {
+func New(name, address string, flags int) (*LoggerType, error) {
 
 	loggerType := &LoggerType{
 		logger: &logrus.Logger{
 			Out:       os.Stdout, // write log to stdout by default
-			Formatter: &stdOutFormater,
+			Formatter: makeFormatter(flags),
 			Hooks:     make(logrus.LevelHooks),
 			Level:     logrus.DebugLevel,
 		},
@@ -69,7 +53,6 @@ func New(name, address string) (*LoggerType, error) {
 		if conn, err := net.Dial(transportProtocol, address); err == nil {
 			loggerType.conn = &conn
 			loggerType.logger.SetOutput(conn)
-			loggerType.logger.SetFormatter(&logstashFormatter)
 			loggerType.status = connected
 		} else {
 			return nil, err
@@ -77,6 +60,35 @@ func New(name, address string) (*LoggerType, error) {
 	}
 
 	return loggerType, nil
+}
+
+func makeFormatter(flags int) (formatter logrus.Formatter) {
+
+	disableTimestamp := (flags&Ltimestamp == 0)
+
+	if (flags & LJSON) == 0 {
+		formatter = &logrus.TextFormatter{
+			DisableColors:          false,
+			QuoteEmptyFields:       true,
+			DisableTimestamp:       disableTimestamp,
+			TimestampFormat:        "15:04:05.000",
+			DisableLevelTruncation: true,
+			FieldMap: logrus.FieldMap{
+				logrus.FieldKeyTime:  "time",
+				logrus.FieldKeyLevel: "level",
+				logrus.FieldKeyMsg:   "message"},
+		}
+	} else {
+		formatter = &logrus.JSONFormatter{
+			DisableTimestamp: disableTimestamp,
+			TimestampFormat:  "15:04:05.000",
+			FieldMap: logrus.FieldMap{
+				logrus.FieldKeyTime:  "time",
+				logrus.FieldKeyLevel: "level",
+				logrus.FieldKeyMsg:   "message"},
+		}
+	}
+	return
 }
 
 /*
@@ -139,12 +151,10 @@ func (lt *LoggerType) reconnect() bool {
 	if conn, err := net.Dial(transportProtocol, lt.address); err == nil {
 		lt.conn = &conn
 		lt.logger.SetOutput(conn)
-		lt.logger.SetFormatter(&logstashFormatter)
 		atomic.StoreInt32(&lt.status, connected)
 		return true
 	}
 	lt.logger.SetOutput(os.Stdout)
-	lt.logger.SetFormatter(&stdOutFormater)
 	return false
 }
 
@@ -245,8 +255,8 @@ To send logs to stdout address parameter must be empty string.
 Name parameter will be add to every log message like module="name"
 Severity log level can be one of: "debug", "info", "warn", "warning", "error", "fatal", "panic".
 */
-func InitLogger(name, severity, address string) (lg *LoggerType, err error) {
-	if lg, err = New(name, address); err != nil {
+func InitLogger(name, severity, address string, flags int) (lg *LoggerType, err error) {
+	if lg, err = New(name, address, flags); err != nil {
 		return nil, err
 	}
 	if len(severity) == 0 {
