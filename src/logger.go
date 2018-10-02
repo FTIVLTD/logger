@@ -71,19 +71,19 @@ func makeFormatter(flags int) (formatter logrus.Formatter) {
 			DisableColors:          false,
 			QuoteEmptyFields:       true,
 			DisableTimestamp:       disableTimestamp,
-			TimestampFormat:        "15:04:05.000",
+			TimestampFormat:        "15:04:05.000000",
 			DisableLevelTruncation: true,
 			FieldMap: logrus.FieldMap{
-				logrus.FieldKeyTime:  "time",
+				logrus.FieldKeyTime:  "xtime",
 				logrus.FieldKeyLevel: "level",
 				logrus.FieldKeyMsg:   "message"},
 		}
 	} else {
 		formatter = &logrus.JSONFormatter{
 			DisableTimestamp: disableTimestamp,
-			TimestampFormat:  "15:04:05.000",
+			TimestampFormat:  "15:04:05.000000",
 			FieldMap: logrus.FieldMap{
-				logrus.FieldKeyTime:  "time",
+				logrus.FieldKeyTime:  "xtime",
 				logrus.FieldKeyLevel: "level",
 				logrus.FieldKeyMsg:   "message"},
 		}
