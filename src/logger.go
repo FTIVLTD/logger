@@ -71,6 +71,7 @@ func makeFormatter(flags int) (formatter logrus.Formatter) {
 			DisableColors:          false,
 			QuoteEmptyFields:       true,
 			DisableTimestamp:       disableTimestamp,
+			FullTimestamp:          true,
 			TimestampFormat:        "15:04:05.000000",
 			DisableLevelTruncation: true,
 			FieldMap: logrus.FieldMap{
