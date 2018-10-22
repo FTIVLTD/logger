@@ -30,6 +30,14 @@ type LoggerType struct {
 	name          string
 	address       string
 	status        int32
+	cnt           counters
+}
+
+type counters struct {
+	debug   int64
+	info    int64
+	warning int64
+	error   int64
 }
 
 func New(name, address string, flags int) (*LoggerType, error) {
@@ -165,8 +173,21 @@ func (lt *LoggerType) checkAndReconnect() {
 	}
 }
 
+func (lt *LoggerType) GetDebugCounter() int64 {
+	return lt.cnt.debug
+}
+
+func (lt *LoggerType) GetInfoCounter() int64 {
+	return lt.cnt.info
+}
+
+func (lt *LoggerType) GetErrorCounter() int64 {
+	return lt.cnt.error
+}
+
 func (lt *LoggerType) Debug(v ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.DebugLevel) {
+		lt.cnt.debug++
 		lt.checkAndReconnect()
 		lt.contextLogger.Debug(v)
 	}
@@ -174,6 +195,7 @@ func (lt *LoggerType) Debug(v ...interface{}) {
 
 func (lt *LoggerType) Info(v ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.InfoLevel) {
+		lt.cnt.info++
 		lt.checkAndReconnect()
 		lt.contextLogger.Info(v)
 	}
@@ -181,6 +203,7 @@ func (lt *LoggerType) Info(v ...interface{}) {
 
 func (lt *LoggerType) Warning(v ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.WarnLevel) {
+		lt.cnt.warning++
 		lt.checkAndReconnect()
 		lt.contextLogger.Warn(v)
 	}
@@ -188,6 +211,7 @@ func (lt *LoggerType) Warning(v ...interface{}) {
 
 func (lt *LoggerType) Error(v ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.ErrorLevel) {
+		lt.cnt.error++
 		lt.checkAndReconnect()
 		lt.contextLogger.Error(v)
 	}
