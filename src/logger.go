@@ -237,6 +237,7 @@ func (lt *LoggerType) Panic(v ...interface{}) {
 
 func (lt *LoggerType) Debugf(format string, args ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.DebugLevel) {
+		lt.cnt.debug++
 		lt.checkAndReconnect()
 		lt.contextLogger.Debugf(format, args...)
 	}
@@ -244,6 +245,7 @@ func (lt *LoggerType) Debugf(format string, args ...interface{}) {
 
 func (lt *LoggerType) Infof(format string, args ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.InfoLevel) {
+		lt.cnt.info++
 		lt.checkAndReconnect()
 		lt.contextLogger.Infof(format, args...)
 	}
@@ -251,6 +253,7 @@ func (lt *LoggerType) Infof(format string, args ...interface{}) {
 
 func (lt *LoggerType) Warningf(format string, args ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.WarnLevel) {
+		lt.cnt.warning++
 		lt.checkAndReconnect()
 		lt.contextLogger.Warnf(format, args...)
 	}
@@ -258,6 +261,7 @@ func (lt *LoggerType) Warningf(format string, args ...interface{}) {
 
 func (lt *LoggerType) Errorf(format string, args ...interface{}) {
 	if lt.contextLogger.Logger.IsLevelEnabled(logrus.ErrorLevel) {
+		lt.cnt.error++
 		lt.checkAndReconnect()
 		lt.contextLogger.Errorf(format, args...)
 	}
