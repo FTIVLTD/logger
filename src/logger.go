@@ -181,6 +181,10 @@ func (lt *LoggerType) GetInfoCounter() int64 {
 	return lt.cnt.info
 }
 
+func (lt *LoggerType) GetWarningCounter() int64 {
+	return lt.cnt.warning
+}
+
 func (lt *LoggerType) GetErrorCounter() int64 {
 	return lt.cnt.error
 }
